@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, TextInput , TouchableOpacity  } from 'react-native'
+import { Text, View, StyleSheet, TextInput , TouchableOpacity, Image  } from 'react-native'
 import { faHouse } from '@fortawesome/free-solid-svg-icons'
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
@@ -7,12 +7,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
-
+import { useNavigation } from '@react-navigation/native';
 
 
 
 const Main =() => {
-
+  const navigation = useNavigation();
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showHomeContent, setShowHomeContent] = useState(false);
 
@@ -71,24 +71,60 @@ const Main =() => {
             style={styles.searchBar}
             placeholder="Search..."
           />
+
+
+
+
+
+
+
+
+          
         </View>
       )}
      
      <View style={styles.content}>
-        <Text>Main Content Area</Text>
+     <Text style={styles.sectionTitle}>University Life Article</Text>
+     <Image
+                source={{ uri: 'https://example.com/praktikum-image.jpg' }} 
+                style={styles.image}
+              />
+
+
+        <Text style={styles.paragraph} > Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla consequat libero
+                est, in rutrum mi auctor vitae. Phasellus pretium, sem in scelerisque viverra, odio
+                nisl interdum lorem.</Text>
+
+
       </View>
 
       <View style={styles.footer}>
-        <FontAwesomeIcon icon={faGear} style={styles.icon} size={32} />
-        <FontAwesomeIcon icon={faCircleInfo} style={styles.icon} size={32} />
-       
-        <TouchableOpacity onPress={handleHomeClick}> 
-          <FontAwesomeIcon icon={faHouse} style={styles.icon} size={32} />
-        </TouchableOpacity>
 
-        <FontAwesomeIcon icon={faComments} style={styles.icon} size={32} />
-        <FontAwesomeIcon icon={faCalendar} style={styles.icon} size={32} />
-      </View>
+<TouchableOpacity onPress={() => navigation.navigate('Settings')} >
+  <FontAwesomeIcon icon={faGear} style={styles.icon} size={32} />
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => navigation.navigate('Info')} >
+  <FontAwesomeIcon icon={faCircleInfo} style={styles.icon} size={32} />
+</TouchableOpacity>
+
+
+<TouchableOpacity onPress={handleHomeClick}>
+  <FontAwesomeIcon icon={faHouse} style={styles.icon} size={32} color={'orange'} />
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => navigation.navigate('Comments')} >
+  <FontAwesomeIcon icon={faComments} style={styles.icon} size={32} />
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => navigation.navigate('Calender')} >
+  <FontAwesomeIcon icon={faCalendar} style={styles.icon} size={32} />
+</TouchableOpacity>
+
+
+</View>
+
+
     </View>
   );
 };
@@ -107,6 +143,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e7e7e7',
   },
+
+  paragraph: {
+    fontSize: 16,
+    lineHeight: 22,
+    marginTop: 10,
+  },
+
   filterHeader: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -152,6 +195,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 
   footer: {

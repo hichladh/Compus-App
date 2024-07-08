@@ -5,7 +5,11 @@ import Main from './src/screens/Main';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ResetPswd from './src/screens/ResetPswd';
-import SignUp from './src/screens/SignUp'
+import SignUp from './src/screens/SignUp';
+import Settings from './src/screens/Settings';
+import Info from './src/screens/Info';
+import Comments from './src/screens/Comments';
+import Calender from './src/screens/Calender';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,11 +23,14 @@ const App = () => {
         <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
         <Stack.Screen name="ResetPswd" component={ResetPswd} options={{ headerShown: false }}/>
         <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
+        <Stack.Screen name="Settings" component={Settings} options={{ headerShown: false }}/>
+        <Stack.Screen name="Info" component={Info} options={{ headerShown: false }}/>
+        <Stack.Screen name="Comments" component={Comments} options={{ headerShown: false }}/>
+        <Stack.Screen name="Calender" component={Calender} options={{ headerShown: false }}/>
+
       </Stack.Navigator>
     </NavigationContainer>
-    /* <View style={styles.root}>
-       <SplashScreen/>
-     </View>*/
+    
   )
 }
 const styles = StyleSheet.create({
@@ -33,6 +40,3 @@ const styles = StyleSheet.create({
   }
 })
 export default App;
-
-
-
