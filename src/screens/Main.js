@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView,Modal, Button } from 'react-native';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
@@ -17,8 +17,16 @@ const Main = () => {
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showHomeContent, setShowHomeContent] = useState(false);
   const [activeFilter, setActiveFilter] = useState('Articles'); // State to track active filter
-
+  const [showForm, setShowForm] = useState(false);
   const scrollViewRef = useRef(null);
+  const [modalVisible, setModalVisible] = useState(false); 
+  const [postType, setPostType] = useState('Articles');
+  const [posts, setPosts] = useState([]);
+  const [title, setTitle] = useState(''); // State for title input
+  const [description, setDescription] = useState(''); // State for description input
+  const [content, setContent] = useState(''); // State for content input
+
+
 
   const handleHomeClick = () => {
     setShowFilterOptions(false);
@@ -56,6 +64,48 @@ const Main = () => {
     }
   };
 
+  const handleCalendarIconClick = () => { // Added function to handle calendar icon click
+    setModalVisible(true);
+  };
+
+  const handlePostTypeChange = (value) => {
+    setPostType(value);
+  };
+
+  const handlePostTypeSelect = (type) => {
+    setPostType(type);
+  };
+
+
+  const handleUpload = () => {
+    // Handle upload functionality here
+    console.log('Upload button clicked');
+    // You can add your upload logic here
+  };
+
+  const handlePost2 = () => {
+    // Create a new post object
+    const newPost = {
+      id: posts.length + 1, // Generate a unique ID (you may use a UUID or a more complex ID generation logic)
+      type: postType,
+      title,
+      description,
+      content,
+    };
+
+    // Add the new post to the posts array
+    setPosts([...posts, newPost]);
+
+    // Close the modal after posting
+    setModalVisible(false);
+
+    // Clear input fields
+    setTitle('');
+    setDescription('');
+    setContent('');
+  };
+
+
   return (
     <View style={styles.container}>
       {showFilterOptions ? (
@@ -82,7 +132,7 @@ const Main = () => {
       ) : showHomeContent ? (
         <View>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.navigate('Calender')}>
+          <TouchableOpacity onPress={handleCalendarIconClick}> 
               <FontAwesomeIcon style={styles.icon} icon={faCalendarPlus} size={24} />
             </TouchableOpacity>
             <Text style={styles.title}>Content</Text>
@@ -149,7 +199,127 @@ const Main = () => {
             Unabhängigkeit während des Studiums bietet.
           </Text>
         </View>
+
+
+
+        {showForm && ( // Added conditional rendering for the form
+          <View style={styles.formContainer}>
+            <Text style={styles.formTitle}>Add New Event</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Title"
+            />
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Description"
+              multiline={true}
+              numberOfLines={4}
+            />
+            <TouchableOpacity onPress={() => setShowForm(false)} style={styles.button}>
+              <Text style={styles.buttonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {posts.map((post) => (
+          <View key={post.id} style={styles.content}>
+            <Text style={styles.sectionTitle}>{post.title}</Text>
+            {/* Example image usage, replace with actual image component */}
+            <Image source={post.type === 'Articles' ? uniImage : post.type === 'Jobs' ? workImage : eventImage} style={styles.image} />
+            <Text style={styles.paragraph}>{post.description}</Text>
+            <Text style={styles.paragraph}>{post.content}</Text>
+          </View>
+        ))}
+
       </ScrollView>
+
+
+
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            
+            <View style={styles.typeContainer}>
+              <TouchableOpacity
+                style={[styles.typeOption, postType === 'Articles' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('Articles')}
+              >
+                <Text style={styles.typeText}>Articles</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.typeOption, postType === 'Jobs' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('Jobs')}
+              >
+                <Text style={styles.typeText}>Jobs</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.typeOption, postType === 'Events' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('Events')}
+              >
+                <Text style={styles.typeText}>Events</Text>
+              </TouchableOpacity>
+            </View>
+
+            
+            <TextInput
+              style={styles.input}
+              placeholder="Title"
+              value={title}
+              onChangeText={setTitle}
+            />
+
+            
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Description"
+              multiline={true}
+              numberOfLines={4}
+              value={description}
+              onChangeText={setDescription}
+            />
+
+
+              <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder="Content"
+              multiline={true}
+              numberOfLines={6}
+              value={content}
+              onChangeText={setContent}
+            />
+
+
+            <View style={styles.uploadContainer}>
+              <Text style={styles.labelText}>Picture</Text>
+              <TouchableOpacity style={styles.uploadButton} onPress={handleUpload}>
+                <Text style={styles.uploadButtonText}>Upload</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button]} onPress={handlePost2}>
+                <Text style={styles.buttonText}>Post</Text>
+              </TouchableOpacity>
+            </View>
+
+
+          </View>
+        </View>
+      </Modal>
+
+
+
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
@@ -265,6 +435,75 @@ const styles = StyleSheet.create({
   icon: {
     marginHorizontal: 15,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalView: {
+    backgroundColor: '#fff', // White background
+    padding: 20,
+    borderRadius: 10,
+    width: '90%', // Adjust width as needed
+    maxHeight: '95%', // Adjust height as needed
+    alignItems: 'center',
+  },
+  typeContainer: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  typeOption: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
+  },
+  activeType: {
+    backgroundColor: '#ffa500', // Orange color for active type
+  },
+  typeText: {
+    fontSize: 16,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: '100%',
+  },
+  textArea: {
+    height: 100,
+  },
+
+  uploadContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+
+  },
+  uploadButton: {
+    backgroundColor: '#ffa500', // Orange background color for button
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  uploadButtonText: {
+    color: '#fff', // White text color for button text
+    fontWeight: 'bold',
+  },
+
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 60,
+  },
+
 });
 
 export default Main;
