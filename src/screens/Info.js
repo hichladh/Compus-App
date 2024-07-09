@@ -27,7 +27,7 @@ const Comments = () => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('Info')} >
-                <FontAwesomeIcon icon={faCircleInfo} style={styles.icon} size={32} />
+                <FontAwesomeIcon icon={faCircleInfo} style={styles.icon} size={32} color={'orange'} />
             </TouchableOpacity>
 
 
@@ -36,7 +36,7 @@ const Comments = () => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('Comments')} >
-                <FontAwesomeIcon icon={faComments} style={styles.icon} size={32} color={'orange'} />
+                <FontAwesomeIcon icon={faComments} style={styles.icon} size={32}  />
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => navigation.navigate('Calender')} >
