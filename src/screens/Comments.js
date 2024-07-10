@@ -93,7 +93,7 @@ const Comments = () => {
                     <FontAwesomeIcon icon={faComments} style={styles.icon} size={32} color={'orange'} />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Calendar')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Calender')}>
                     <FontAwesomeIcon icon={faCalendar} style={styles.icon} size={32} />
                 </TouchableOpacity>
             </View>
