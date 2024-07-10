@@ -65,7 +65,7 @@ const Settings = () => {
 
       <TouchableOpacity onPress={openProfilePicture} style={styles.profileContainer}>
         <Image source={profileImage} style={styles.profilePicture} />
-        <Text style={styles.name}>Maria Smith</Text>
+        <Text style={styles.name}>Maria Ahmad</Text>
         <Text style={styles.subtitle}>{text}</Text>
       </TouchableOpacity>
 

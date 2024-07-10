@@ -18,9 +18,9 @@ const Comments = () => {
     };
 
     const notifications = [
-        { id: '1', title: 'Notification 1', description: 'This is the first notification', details: 'More details about notification 1' },
-        { id: '2', title: 'Notification 2', description: 'This is the second notification', details: 'More details about notification 2' },
-        { id: '3', title: 'Notification 3', description: 'This is the third notification', details: 'More details about notification 3' },
+        { id: '1', title: 'Notification 1', description: 'Tomorrow you have an event at the university', details: 'More details about notification 1' },
+        { id: '2', title: 'Notification 2', description: 'you were added to the Group PK1', details: 'More details about notification 2' },
+        { id: '3', title: 'Notification 3', description: 'Alice sent you a message', details: 'More details about notification 3' },
     ];
 
     const handleNotificationPress = (notification) => {
