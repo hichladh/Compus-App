@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHouse, faCircleInfo, faGear, faComments, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const Calender = () => {
+const CalendarComponent = () => {
   const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [eventTitle, setEventTitle] = useState('');
@@ -64,17 +64,23 @@ const Calender = () => {
         keyExtractor={(item, index) => `${item.date}-${index}`}
         contentContainerStyle={styles.eventList}
       />
-      <Modal visible={modalVisible} animationType="slide">
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
-          <TextInput
-            placeholder="Event Title"
-            value={eventTitle}
-            onChangeText={setEventTitle}
-            style={styles.input}
-          />
-          <View style={styles.buttonContainer}>
-            <Button style={styles.button} title="Cancel" color="red" onPress={() => setModalVisible(false)} />
-            <Button style={styles.button} title="Add Event" onPress={addEvent} />
+          <View style={styles.modalView}>
+            <TextInput
+              placeholder="Event Title"
+              value={eventTitle}
+              onChangeText={setEventTitle}
+              style={styles.input}
+            />
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
+                <Text style={styles.buttonText}>Close</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.postButton]} onPress={addEvent}>
+                <Text style={styles.buttonText}>Add Event</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -112,37 +118,19 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
   modalView: {
-    flex: 1,
-    justifyContent: 'center', // Center the modal vertically
-    alignItems: 'center', // Center the modal horizontally
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-    color: 'orange', // Make modal text orange
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  buttonOpen: {
-    backgroundColor: 'orange', // Make open button orange
-  },
-  buttonClose: {
-    backgroundColor: 'orange', // Make close button orange
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '90%',
+    maxHeight: '95%',
+    alignItems: 'center',
   },
   input: {
     height: 40,
@@ -150,19 +138,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    marginBottom: 20,
+    marginBottom: 10,
+    width: '100%',
   },
-  addButton: {
-    backgroundColor: 'orange', // Make add button orange
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
   },
-  cancelButton: {
-    backgroundColor: 'orange', // Make cancel button orange
-    borderRadius: 5,
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    backgroundColor: 'orange',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  postButton: {
+    backgroundColor: 'blue',
   },
   footer: {
     flexDirection: 'row',
@@ -179,11 +177,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginHorizontal: 15,
-   
   },
   eventList: {
     marginTop: 20,
-    maxHeight: 200, // Adjust this height as needed
+    maxHeight: 200,
   },
   eventItem: {
     padding: 10,
@@ -192,14 +189,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e7e7e7',
     marginBottom: 10,
     borderLeftWidth: 5,
-    borderLeftColor: 'orange', // Add orange border to event items
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 10,
+    borderLeftColor: 'orange',
   },
 });
 
-export default Calender;
+export default CalendarComponent;
