@@ -2,6 +2,7 @@ import React, { Component, useEffect, useState } from 'react'
 import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const Login = ({ navigation }) => {
 
@@ -12,29 +13,53 @@ const Login = ({ navigation }) => {
     const toggleSecureEntry = () => {
         setSecureTextEntry(!secureTextEntry);
     };
+    const [baseUrl] = useState("http://10.0.2.2:8080");
+
 
     const handleLogin = async () => {
-        try {
-            const response = await fetch('https://jsonplaceholder.typicode.com/users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            });
+        try { 
 
-            if (response.ok) {
-                // If response status is OK (200), login successful
-                console.log('Login successful');
+            const url = `${baseUrl}/api/users/login`;
+            const data = {
+                email: email,
+                password: password
+              };
+            
+              try {
+                const response = await axios.post(url, data);
+                console.log('Login successful:', response.data);
                 navigation.navigate('Main');
-            } else {
-                // If response status is not OK, login failed
-                console.log('Login failed');
-                
-            }
+                return response.data;
+              } catch (error) {
+                console.error('Login failed:', error);
+                throw error;
+              }
+
+
+
+
+           /* console.log('start..');
+            console.log(`${baseUrl}/api/users/getAllUsers`);
+
+            const fetchData = async () => {
+                try {
+                  const response = await axios.get(`${baseUrl}/api/users/getAllUsers`);
+                  console.log(response.data);
+                } catch (error) {
+                    console.log(error);
+                } 
+              };
+          
+              // Call the fetchData function
+              fetchData();
+
+
+              axios.get(`${baseUrl}/api/users/getAllUsers`).then((response) => {
+                console.log(response);
+                console.log(response.data);
+              });
+
+           */ 
         } catch (error) {
             // If an error occurs during the request
             console.error('Login error:', error);

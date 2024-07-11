@@ -3,6 +3,8 @@ import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity} from 'react
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import CheckBox from '@react-native-community/checkbox';
+import axios from 'axios';
+
 
 const Login = ({ navigation }) => {
 
@@ -16,10 +18,37 @@ const Login = ({ navigation }) => {
     const toggleSecureEntry = () => {
         setSecureTextEntry(!secureTextEntry);
     };
+    const [baseUrl] = useState("http://10.0.2.2:8080");
 
     const handleSignUp = async () => {
 
-    };
+       try{
+
+            const url = `${baseUrl}/api/users/createUser`;
+            const data = {
+                email: email,
+                password: password,
+                username: name
+              };
+            
+              try {
+                const response = await axios.post(url, data);
+                console.log('Creation successful:', response.data);
+                navigation.navigate('Login');
+                return response.data;
+              } catch (error) {
+                console.error('Creation failed:', error);
+                throw error;
+              }
+            
+            } catch (error) {
+                // If an error occurs during the request
+                console.error('Login error:', error);
+               
+            }
+        }
+
+    ;
 
 
     return (
