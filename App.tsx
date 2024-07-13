@@ -11,12 +11,14 @@ import Info from './src/screens/Info';
 import Comments from './src/screens/Comments';
 import Calender from './src/screens/Calender';
 import Chat from './src/screens/Chat';
+import { UserProvider } from './src/screens/UserContext';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
 
   return (
+    <UserProvider>
     <NavigationContainer>
       <Stack.Navigator >
         
@@ -30,9 +32,10 @@ const App = () => {
         <Stack.Screen name="Calender" component={Calender} options={{ headerShown: false }}/>
         <Stack.Screen name="Chat" component={Chat} options={{ headerShown: false }}/>
 
+
       </Stack.Navigator>
     </NavigationContainer>
-    
+    </UserProvider>
   )
 }
 const styles = StyleSheet.create({

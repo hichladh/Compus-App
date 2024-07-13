@@ -1,11 +1,13 @@
-import React, { Component, useEffect, useState } from 'react'
-import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import React, {  useState , useContext} from 'react'
+import { Text, View, Image, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { UserContext } from './UserContext';
+
 
 const Login = ({ navigation }) => {
-
+    const { setUser } = useContext(UserContext);
     const [secureTextEntry, setSecureTextEntry] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,17 +24,20 @@ const Login = ({ navigation }) => {
             const url = `${baseUrl}/api/users/login`;
             const data = {
                 email: email,
-                password: password
+                password: password,
+                
               };
             
               try {
                 const response = await axios.post(url, data);
                 console.log('Login successful:', response.data);
+                setUser(response.data);
                 navigation.navigate('Main');
                 return response.data;
+                
               } catch (error) {
                 console.error('Login failed:', error);
-                throw error;
+                Alert.alert('Login Failed', 'Email or password are not correct.');
               }
 
 

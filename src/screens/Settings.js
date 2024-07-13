@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext , useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image, Switch, Modal, Alert } from 'react-native';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -8,10 +8,11 @@ import { faComments } from '@fortawesome/free-solid-svg-icons';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import profileImage from './taswira.jpg';
 import { useNavigation } from '@react-navigation/native';
+import { UserContext } from './UserContext';
 
 const Settings = () => {
   const navigation = useNavigation();
-
+  const { user } = useContext(UserContext);
   const [isEnabled1, setIsEnabled1] = useState(true);
   const [isEnabled2, setIsEnabled2] = useState(false);
   const [isEnabled3, setIsEnabled3] = useState(true);
@@ -65,7 +66,7 @@ const Settings = () => {
 
       <TouchableOpacity onPress={openProfilePicture} style={styles.profileContainer}>
         <Image source={profileImage} style={styles.profilePicture} />
-        <Text style={styles.name}>Maria Ahmad</Text>
+        <Text style={styles.name}>{user ? user.username : 'Loading...'}</Text>
         <Text style={styles.subtitle}>{text}</Text>
       </TouchableOpacity>
 
