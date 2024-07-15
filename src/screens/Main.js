@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect  } from 'react';
 import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ScrollView,Modal, Button } from 'react-native';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -11,27 +11,84 @@ import { useNavigation } from '@react-navigation/native';
 import uniImage from './taswira2.jpg';
 import workImage from './taswira3.jpg';
 import eventImage from './taswira4.jpg';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 const Main = () => {
   const navigation = useNavigation();
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [showHomeContent, setShowHomeContent] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('Articles'); // State to track active filter
+  const [activeFilter, setActiveFilter] = useState('Articles'); 
   const [showForm, setShowForm] = useState(false);
   const scrollViewRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false); 
   const [postType, setPostType] = useState('Articles');
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState(''); // State for title input
-  const [description, setDescription] = useState(''); // State for description input
-  const [content, setContent] = useState(''); // State for content input
+  const [title, setTitle] = useState(''); 
+  const [description, setDescription] = useState(''); 
+  const [content, setContent] = useState(''); 
+
+
+
+
+
+
+
+      const BlogType = {
+        ARTICLE: 'ARTICLE',
+        JOB: 'JOB',
+        EVENT: 'EVENT',
+      };
+
+
+      useFocusEffect(
+        React.useCallback(() => {
+          const fetchBlogs = async () => {
+            try {
+              const response = await axios.get('http://10.0.2.2:8080/api/blogs/getAllBlogs'); 
+              setPosts(response.data); 
+            } catch (error) {
+              console.error('Error fetching blogs:', error);
+            }
+          };
+    
+          fetchBlogs(); 
+    
+          return () => {
+           
+          };
+        }, [])
+      );
+
+
+
+
+
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+       
+        const response = await axios.get('http://10.0.2.2:8080/api/blogs/getAllBlogs'); 
+        console.log('Fetched posts:', response.data); 
+        setPosts(response.data); 
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
 
 
 
   const handleHomeClick = () => {
     setShowFilterOptions(false);
     setShowHomeContent(true);
-    setActiveFilter('Articles'); // Set active filter to Articles when home icon is clicked
+    setActiveFilter('Articles'); 
   };
 
   const handleFilterClick = () => {
@@ -47,24 +104,22 @@ const Main = () => {
 
   const handleFilterOptionClick = (filter) => {
     setActiveFilter(filter);
-
-    // Scroll to respective section based on filter clicked
     switch (filter) {
       case 'Articles':
-        scrollToPosition(0); // Scroll to Articles section
+        scrollToPosition(0); 
         break;
       case 'Jobs':
-        scrollToPosition(400); // Scroll to Jobs section (adjust offset as per your layout)
+        scrollToPosition(400); 
         break;
       case 'Events':
-        scrollToPosition(800); // Scroll to Events section (adjust offset as per your layout)
+        scrollToPosition(800); 
         break;
       default:
         break;
     }
   };
 
-  const handleCalendarIconClick = () => { // Added function to handle calendar icon click
+  const handleCalendarIconClick = () => { 
     setModalVisible(true);
   };
 
@@ -77,35 +132,55 @@ const Main = () => {
   };
 
 
+ 
+
   const handleUpload = () => {
-    // Handle upload functionality here
+    
     console.log('Upload button clicked');
-    // You can add your upload logic here
+    
   };
 
-  const handlePost2 = () => {
-    // Create a new post object
-    const newPost = {
-      id: posts.length + 1, // Generate a unique ID (you may use a UUID or a more complex ID generation logic)
-      type: postType,
-      title,
-      description,
-      content,
-    };
+  const handlePost2 = async () => {
 
-    // Add the new post to the posts array
-    setPosts([...posts, newPost]);
 
-    // Close the modal after posting
-    setModalVisible(false);
+  const typeMap = {
+    '1': 'ARTICLE',
+    '2': 'JOB',
+    '3': 'EVENT'
+  };
 
-    // Clear input fields
-    setTitle('');
-    setDescription('');
-    setContent('');
+  
+  const newPost = {
+    type: typeMap[postType], 
+    title,
+    description,
+    content,
+  };
+  
+    try {
+      const response = await axios.post('http://10.0.2.2:8080/api/blogs/createBlog', newPost); 
+      setPosts([...posts, response.data]); 
+      setModalVisible(false); 
+      setTitle(''); 
+      setDescription('');
+      setContent('');
+    } catch (error) {
+      console.error('Error posting blog:', error);
+    }
   };
 
 
+
+
+
+
+
+
+
+
+
+
+ 
   return (
     <View style={styles.container}>
       {showFilterOptions ? (
@@ -132,8 +207,8 @@ const Main = () => {
       ) : showHomeContent ? (
         <View>
           <View style={styles.header}>
-          <TouchableOpacity onPress={handleCalendarIconClick}> 
-              <FontAwesomeIcon style={styles.icon} icon={faCalendarPlus} size={24} />
+            <TouchableOpacity onPress={handleCalendarIconClick}>
+              <FontAwesomeIcon style={styles.icon} icon={faCalendar} size={24} />
             </TouchableOpacity>
             <Text style={styles.title}>Content</Text>
             <TouchableOpacity onPress={() => setShowFilterOptions(true)}>
@@ -145,7 +220,7 @@ const Main = () => {
       ) : (
         <View>
           <View style={styles.header}>
-            <FontAwesomeIcon style={styles.icon} icon={faCalendarPlus} size={24} />
+            <FontAwesomeIcon style={styles.icon} icon={faCalendar} size={24} />
             <Text style={styles.title}>Content</Text>
             <TouchableOpacity onPress={handleFilterClick}>
               <Text style={styles.filter}>Filter</Text>
@@ -155,85 +230,31 @@ const Main = () => {
         </View>
       )}
 
-      <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Das Leben an der Uni: Mehr als nur Vorlesungen</Text>
-          <Image source={uniImage} style={styles.image} />
-          <Text style={styles.paragraph}>
-            Das Uni-Leben bietet weit mehr als nur Vorlesungen und Prüfungen. Es ist eine Zeit voller neuer
-            Freundschaften, spannender Erfahrungen und persönlicher Entwicklung. Neben dem Lernen gibt es zahlreiche
-            Möglichkeiten, sich in Hochschulgruppen zu engagieren, Sport zu treiben und an vielfältigen Veranstaltungen
-            teilzunehmen. Diese Erlebnisse bereichern die Studienzeit und machen sie unvergesslich.
-          </Text>
-        </View>
+            <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scrollViewContent}>
+              {posts.map((post) => (
+                <View key={post.id} style={styles.content}>
+                  <Text style={styles.sectionTitle}>{post.title}</Text>
+                  
+                  <Image
+                    source={
+                      post.picture
+                        ? { uri: post.picture }
+                        : post.type === 'ARTICLE'
+                        ? uniImage
+                        : post.type === 'JOB'
+                        ? workImage
+                        : post.type === 'EVENT'
+                        ? eventImage
+                        : null 
+                    }
+                    style={styles.image}
+                  />
 
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>University Life Article</Text>
-          <Image source={uniImage} style={styles.image} />
-          <Text style={styles.paragraph}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla consequat libero est, in rutrum mi auctor vitae.
-            Phasellus pretium, sem in scelerisque viverra, odio nisl interdum lorem.
-          </Text>
-        </View>
-
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Sommerfest für Studierende</Text>
-          <Image source={eventImage} style={styles.image} />
-          <Text style={styles.paragraph}>
-            Nächste Woche findet an unserer Uni ein großes Sommerfest für alle Studierenden statt. Es wird Live-Musik,
-            verschiedene Essensstände und spannende Aktivitäten wie Spiele und Wettbewerbe geben. Das Fest bietet eine
-            tolle Gelegenheit, neue Leute kennenzulernen und gemeinsam eine unvergessliche Zeit zu erleben. Verpasst nicht
-            die Chance, dabei zu sein und das Beste aus eurem Uni-Leben zu machen!
-          </Text>
-        </View>
-
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Deine Chance auf Praxisnahe Erfahrungen während des Studiums</Text>
-          <Image source={workImage} style={styles.image} />
-          <Text style={styles.paragraph}>
-            Als Werkstudent hast du die einzigartige Gelegenheit, wertvolle praktische Erfahrungen zu sammeln und dein
-            theoretisches Wissen aus dem Studium direkt in der Praxis anzuwenden. In einer Werkstudentenstelle arbeitest
-            du flexibel neben deinem Studium und unterstützt Unternehmen in verschiedenen Projekten und Aufgabenbereichen.
-            Dies ermöglicht es dir, Einblicke in die Arbeitswelt zu gewinnen, wertvolle Kontakte zu knüpfen und deine
-            Karrierechancen zu verbessern. Darüber hinaus profitierst du von einer fairen Vergütung, die dir finanzielle
-            Unabhängigkeit während des Studiums bietet.
-          </Text>
-        </View>
-
-
-
-        {showForm && ( // Added conditional rendering for the form
-          <View style={styles.formContainer}>
-            <Text style={styles.formTitle}>Add New Event</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Title"
-            />
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Description"
-              multiline={true}
-              numberOfLines={4}
-            />
-            <TouchableOpacity onPress={() => setShowForm(false)} style={styles.button}>
-              <Text style={styles.buttonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
-        {posts.map((post) => (
-          <View key={post.id} style={styles.content}>
-            <Text style={styles.sectionTitle}>{post.title}</Text>
-            {/* Example image usage, replace with actual image component */}
-            <Image source={post.type === 'Articles' ? uniImage : post.type === 'Jobs' ? workImage : eventImage} style={styles.image} />
-            <Text style={styles.paragraph}>{post.description}</Text>
-            <Text style={styles.paragraph}>{post.content}</Text>
-          </View>
-        ))}
-
-      </ScrollView>
-
-
+                  <Text style={styles.paragraph}>{post.description}</Text>
+                  <Text style={styles.paragraph}>{post.content}</Text>
+                </View>
+              ))}
+            </ScrollView>
 
 
       <Modal
@@ -246,29 +267,27 @@ const Main = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
-            
             <View style={styles.typeContainer}>
               <TouchableOpacity
-                style={[styles.typeOption, postType === 'Articles' && styles.activeType]}
-                onPress={() => handlePostTypeSelect('Articles')}
+                style={[styles.typeOption, postType === 'ARTICLE' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('ARTICLE')}
               >
                 <Text style={styles.typeText}>Articles</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.typeOption, postType === 'Jobs' && styles.activeType]}
-                onPress={() => handlePostTypeSelect('Jobs')}
+                style={[styles.typeOption, postType === 'JOB' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('JOB')}
               >
                 <Text style={styles.typeText}>Jobs</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.typeOption, postType === 'Events' && styles.activeType]}
-                onPress={() => handlePostTypeSelect('Events')}
+                style={[styles.typeOption, postType === 'EVENT' && styles.activeType]}
+                onPress={() => handlePostTypeSelect('EVENT')}
               >
                 <Text style={styles.typeText}>Events</Text>
               </TouchableOpacity>
             </View>
 
-            
             <TextInput
               style={styles.input}
               placeholder="Title"
@@ -276,7 +295,6 @@ const Main = () => {
               onChangeText={setTitle}
             />
 
-            
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Description"
@@ -286,8 +304,7 @@ const Main = () => {
               onChangeText={setDescription}
             />
 
-
-              <TextInput
+            <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Content"
               multiline={true}
@@ -295,7 +312,6 @@ const Main = () => {
               value={content}
               onChangeText={setContent}
             />
-
 
             <View style={styles.uploadContainer}>
               <Text style={styles.labelText}>Picture</Text>
@@ -305,21 +321,16 @@ const Main = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
+              <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
                 <Text style={styles.buttonText}>Close</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button]} onPress={handlePost2}>
                 <Text style={styles.buttonText}>Post</Text>
               </TouchableOpacity>
             </View>
-
-
           </View>
         </View>
       </Modal>
-
-
-
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
@@ -445,8 +456,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // White background
     padding: 20,
     borderRadius: 10,
-    width: '90%', // Adjust width as needed
-    maxHeight: '95%', // Adjust height as needed
+    width: '90%', 
+    maxHeight: '95%', 
     alignItems: 'center',
   },
   typeContainer: {
@@ -460,7 +471,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   activeType: {
-    backgroundColor: '#ffa500', // Orange color for active type
+    backgroundColor: '#ffa500', 
   },
   typeText: {
     fontSize: 16,
@@ -493,7 +504,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   uploadButtonText: {
-    color: '#fff', // White text color for button text
+    color: '#fff', 
     fontWeight: 'bold',
   },
 
